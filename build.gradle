@@ -17,7 +17,6 @@ dependencies {
 jar {
   manifest {
     attributes(
-      "Name": "org.zivver.dropwizard.ratelimit",
       "Implementation-Title": "Dropwizard-Ratelimit",
       "Implementation-Version": version,
       "Implementation-Vendor": "ZIVVER B.V."
