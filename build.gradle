@@ -1,0 +1,28 @@
+apply plugin: 'java'
+
+version = "0.1"
+
+repositories {
+  mavenCentral()
+  jcenter()
+}
+
+dependencies {
+  compile "com.hazelcast:hazelcast:3.7.5"
+  compile "com.hazelcast:hazelcast-client:3.7.5"
+  compile "com.github:bucket4j:1.0.1"
+  compileOnly "io.dropwizard:dropwizard-core:1.0.5"
+}
+
+jar {
+  manifest {
+    attributes(
+      "Name": "org.zivver.dropwizard.ratelimit",
+      "Implementation-Title": "Dropwizard-Ratelimit",
+      "Implementation-Version": version,
+      "Implementation-Vendor": "ZIVVER B.V."
+      )
+  }
+
+  from "LICENSE"
+}
