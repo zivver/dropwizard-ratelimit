@@ -8,9 +8,10 @@ repositories {
 }
 
 dependencies {
-  compile "com.github:bucket4j:1.0.1"
+  compile "com.github.vladimir-bukhtoyarov:bucket4j-jcache:2.0.0"
   compile "com.hazelcast:hazelcast:3.7.5"
   compile "com.hazelcast:hazelcast-client:3.7.5"
+  compile "javax.cache:cache-api:1.0.0"
   compileOnly "io.dropwizard:dropwizard-core:1.0.5"
 }
 

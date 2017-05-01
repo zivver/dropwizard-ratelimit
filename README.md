@@ -24,21 +24,18 @@ Add the project to your dependencies. You will also need the following dependenc
 	    <version>3.7.5</version>
 	</dependency>
 	<dependency>
-	    <groupId>com.github</groupId>
-	    <artifactId>bucket4j</artifactId>
-	    <version>1.0.1</version>
-	</dependency>
+        <groupId>com.github.vladimir-bukhtoyarov</groupId>
+        <artifactId>bucket4j-jcache</artifactId>
+        <version>2.0.0</version>
+    </dependency>
+    <dependency>
+        <groupId>javax.cache</groupId>
+        <artifactId>cache-api</artifactId>
+        <version>1.0.0</version>
+    </dependency>
 </dependencies>
 ```
-The bucket4j library is distributed through Bintray, so you need to add the Bintray repository to your `pom.xml` as well:
-```
-<repositories>
-         <repository>
-             <id>jcenter</id>
-             <url>http://jcenter.bintray.com</url>
-         </repository>
-     </repositories>
-```
+
 Then, in your Dropwizard initialize method add the following:
 ```
 @Override

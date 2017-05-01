@@ -1,28 +1,28 @@
 package org.zivver.dropwizard.ratelimit.providers;
 
-import com.github.bucket4j.BandwidthDefinition;
-import com.github.bucket4j.Bucket;
-import com.github.bucket4j.BucketConfiguration;
-import com.github.bucket4j.TimeMeter;
-import com.github.bucket4j.grid.GridBucket;
-import com.github.bucket4j.grid.GridBucketState;
-import com.github.bucket4j.grid.hazelcast.HazelcastProxy;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import com.hazelcast.core.ICacheManager;
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Bucket4j;
+import io.github.bucket4j.BucketConfiguration;
+import io.github.bucket4j.grid.GridBucketState;
+import io.github.bucket4j.grid.ProxyManager;
+import io.github.bucket4j.grid.jcache.JCache;
 import org.zivver.dropwizard.ratelimit.RateLimitProvider;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.cache.Cache;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public class HazelcastRateLimitProvider implements RateLimitProvider {
-  final static protected String HAZELCAST_RATELIMIT_MAP = "org.zivver.dropwizard.ratelimit";
-  final static protected TimeMeter TIME_METER = TimeMeter.SYSTEM_MILLISECONDS;
 
-  protected BucketConfiguration bucketConfiguration;
-  protected IMap<Object, GridBucketState> buckets;
+  public static final String BUCKET_CACHE = "my_buckets";
+  private final ProxyManager<String> bucketManager;
+  private Supplier<BucketConfiguration> configSupplier;
 
   public HazelcastRateLimitProvider(long permitsPerMinute) {
     this(permitsPerMinute, 1, TimeUnit.MINUTES);
@@ -33,18 +33,21 @@ public class HazelcastRateLimitProvider implements RateLimitProvider {
   }
 
   public HazelcastRateLimitProvider(long permitsPerPeriod, long period, TimeUnit timeUnit, Config config) {
-    long bandwidthPeriod = TIME_METER.toBandwidthPeriod(timeUnit, period);
-    List<BandwidthDefinition> bandwidths = new ArrayList<>();
-    bandwidths.add(new BandwidthDefinition(permitsPerPeriod, permitsPerPeriod, bandwidthPeriod, false));
+    Duration periodDuration = Duration.ofNanos(timeUnit.toNanos(period));
+    Bandwidth rateLimit = Bandwidth.simple(permitsPerPeriod, periodDuration);
+    BucketConfiguration configuration = Bucket4j.configurationBuilder()
+            .addLimit(rateLimit)
+            .buildConfiguration();
+    this.configSupplier = () -> configuration;
+
     HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-
-    this.bucketConfiguration = new BucketConfiguration(bandwidths, TIME_METER);
-    this.buckets = hazelcastInstance.getMap(HAZELCAST_RATELIMIT_MAP);
-
+    ICacheManager cacheManager = hazelcastInstance.getCacheManager();
+    Cache<String, GridBucketState> cache = cacheManager.getCache(BUCKET_CACHE);
+    this.bucketManager = Bucket4j.extension(JCache.class).proxyManagerForCache(cache);
   }
 
   public boolean isOverLimit(String id, long cost) {
-    Bucket bucket = new GridBucket(bucketConfiguration, new HazelcastProxy(buckets, id));
+    Bucket bucket = bucketManager.getProxy(id, configSupplier);
     return !bucket.tryConsume(cost);
   }
 }
