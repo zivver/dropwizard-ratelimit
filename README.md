@@ -1,4 +1,4 @@
-##Dropwizard Ratelimit
+## Dropwizard Ratelimit
 
 
 Dropwizard Ratelimit adds the ability to apply rate limiting directly in [Dropwizard](http://www.dropwizard.io) without any external services.
@@ -7,32 +7,32 @@ This project uses [bucket4j](https://github.com/vladimir-bukhtoyarov/bucket4j) a
 
 Pull requests are welcome!
 
-####How to use
+#### How to use
 This project works with Dropwizard 1.0.5.
 
 Add the project to your dependencies. You will also need the following dependencies to your `pom.xml`:
 ```
 <dependencies>
 	<dependency>
-	    <groupId>com.hazelcast</groupId>
-	    <artifactId>hazelcast</artifactId>
-	    <version>3.7.5</version>
+		<groupId>com.hazelcast</groupId>
+		<artifactId>hazelcast</artifactId>
+		<version>3.7.5</version>
 	</dependency>
 	<dependency>
-	    <groupId>com.hazelcast</groupId>
-	    <artifactId>hazelcast-client</artifactId>
-	    <version>3.7.5</version>
+		<groupId>com.hazelcast</groupId>
+		<artifactId>hazelcast-client</artifactId>
+		<version>3.7.5</version>
 	</dependency>
 	<dependency>
-        <groupId>com.github.vladimir-bukhtoyarov</groupId>
-        <artifactId>bucket4j-jcache</artifactId>
-        <version>2.0.0</version>
-    </dependency>
-    <dependency>
-        <groupId>javax.cache</groupId>
-        <artifactId>cache-api</artifactId>
-        <version>1.0.0</version>
-    </dependency>
+		<groupId>com.github.vladimir-bukhtoyarov</groupId>
+		<artifactId>bucket4j-jcache</artifactId>
+		<version>2.0.0</version>
+	</dependency>
+	<dependency>
+		<groupId>javax.cache</groupId>
+		<artifactId>cache-api</artifactId>
+		<version>1.0.0</version>
+	</dependency>
 </dependencies>
 ```
 
@@ -64,6 +64,6 @@ Response getIndex() {
 }
 ```
 
-####Copyright and License
+#### Copyright and License
 Copyright 2017 ZIVVER B.V.
 Licensed under the [MIT License](https://opensource.org/licenses/MIT)
